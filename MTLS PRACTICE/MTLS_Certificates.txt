@@ -1,0 +1,233 @@
+Microsoft Windows [Version 10.0.19045.2965]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\USER\MtlsRoot>openssl genrsa -des3 -out rootCA.key 2048
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+
+C:\Users\USER\MtlsRoot>openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 1825 -out rootCA.pem
+Enter pass phrase for rootCA.key:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:IN
+State or Province Name (full name) [Some-State]:rootCACertificate
+Locality Name (eg, city) []:rootCACertificate
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:rootCACertificate
+Organizational Unit Name (eg, section) []:rootCACertificate
+Common Name (e.g. server FQDN or YOUR name) []:localhost
+Email Address []:rootCACertificate
+
+C:\Users\USER\MtlsRoot>openssl genrsa -des3 -out server.key 2048
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+
+C:\Users\USER\MtlsRoot>openssl req -new -sha256 -key server.key -out server.csr
+Enter pass phrase for server.key:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:IN
+State or Province Name (full name) [Some-State]:serverCertificate
+Locality Name (eg, city) []:serverCertificate
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:serverCertificate
+Organizational Unit Name (eg, section) []:serverCertificate
+Common Name (e.g. server FQDN or YOUR name) []:localhost
+Email Address []:serverCertificate
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:123456
+An optional company name []:serverCertificate
+
+C:\Users\USER\MtlsRoot>openssl x509 -req -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.pem -days 365 -sha256
+Certificate request self-signature ok
+subject=C = IN, ST = serverCertificate, L = serverCertificate, O = serverCertificate, OU = serverCertificate, CN = localhost, emailAddress = serverCertificate
+Enter pass phrase for rootCA.key:
+
+C:\Users\USER\MtlsRoot>openssl genrsa -des3 -out client.key 2048
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+
+C:\Users\USER\MtlsRoot>openssl req -new -sha256 -key client.key -out client.csr
+Enter pass phrase for client.key:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:IN
+State or Province Name (full name) [Some-State]:clientCertificate
+Locality Name (eg, city) []:clientCertificate
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:clientCertificate
+Organizational Unit Name (eg, section) []:clientCertificate
+Common Name (e.g. server FQDN or YOUR name) []:localhost
+Email Address []:clientCertificate
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:123456
+An optional company name []:clientCertificate
+
+C:\Users\USER\MtlsRoot>openssl x509 -req -in client.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out client.pem -days 365 -sha256
+Certificate request self-signature ok
+subject=C = IN, ST = clientCertificate, L = clientCertificate, O = clientCertificate, OU = clientCertificate, CN = localhost, emailAddress = clientCertificate
+Enter pass phrase for rootCA.key:
+
+C:\Users\USER\MtlsRoot>openssl pkcs12 -export -in server.pem -out keystore.p12 -name server -nodes -inkey server.key
+Warning: output encryption option -nodes ignored with -export
+Enter pass phrase for server.key:
+Enter Export Password:
+Verifying - Enter Export Password:
+
+C:\Users\USER\MtlsRoot>openssl pkcs12 -export -in client.pem -out keystore.p12 -name client -nodes -inkey client.key
+Warning: output encryption option -nodes ignored with -export
+Enter pass phrase for client.key:
+Enter Export Password:
+Verifying - Enter Export Password:
+
+C:\Users\USER\MtlsRoot>keytool -v -list -keystore keystore.p12
+Enter keystore password:
+Keystore type: PKCS12
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+Alias name: client
+Creation date: May 17, 2023
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: EMAILADDRESS=clientCertificate, CN=localhost, OU=clientCertificate, O=clientCertificate, L=clientCertificate, ST=clientCertificate, C=IN
+Issuer: EMAILADDRESS=rootCACertificate, CN=localhost, OU=rootCACertificate, O=rootCACertificate, L=rootCACertificate, ST=rootCACertificate, C=IN
+Serial number: 338da1f19a51a9a48d8a6019fde7986f9faf3639
+Valid from: Wed May 17 14:37:14 IST 2023 until: Thu May 16 14:37:14 IST 2024
+Certificate fingerprints:
+         SHA1: 6C:6A:D2:6E:BC:6B:5D:0D:F4:DF:E7:50:B9:4D:9F:DE:6B:F5:BF:6E
+         SHA256: A5:4F:7D:F1:50:19:6E:B7:A8:28:76:FD:80:6F:38:CF:62:AD:EF:D1:3D:DC:C8:8D:A5:CD:4D:C3:EA:94:AE:FA
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 1
+
+
+*******************************************
+*******************************************
+
+
+
+C:\Users\USER\MtlsRoot>openssl pkcs12 -export -in server.pem -out serverkeystore.p12 -name server -nodes -inkey server.key
+Warning: output encryption option -nodes ignored with -export
+Enter pass phrase for server.key:
+Enter Export Password:
+Verifying - Enter Export Password:
+
+C:\Users\USER\MtlsRoot>keytool -v -list -keystore keystore.p12
+Enter keystore password:
+Keystore type: PKCS12
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+Alias name: client
+Creation date: May 17, 2023
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: EMAILADDRESS=clientCertificate, CN=localhost, OU=clientCertificate, O=clientCertificate, L=clientCertificate, ST=clientCertificate, C=IN
+Issuer: EMAILADDRESS=rootCACertificate, CN=localhost, OU=rootCACertificate, O=rootCACertificate, L=rootCACertificate, ST=rootCACertificate, C=IN
+Serial number: 338da1f19a51a9a48d8a6019fde7986f9faf3639
+Valid from: Wed May 17 14:37:14 IST 2023 until: Thu May 16 14:37:14 IST 2024
+Certificate fingerprints:
+         SHA1: 6C:6A:D2:6E:BC:6B:5D:0D:F4:DF:E7:50:B9:4D:9F:DE:6B:F5:BF:6E
+         SHA256: A5:4F:7D:F1:50:19:6E:B7:A8:28:76:FD:80:6F:38:CF:62:AD:EF:D1:3D:DC:C8:8D:A5:CD:4D:C3:EA:94:AE:FA
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 1
+
+
+*******************************************
+*******************************************
+
+
+
+C:\Users\USER\MtlsRoot>keytool -v -list -keystore serverkeystore.p12
+Enter keystore password:
+Keystore type: PKCS12
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+Alias name: server
+Creation date: May 17, 2023
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: EMAILADDRESS=serverCertificate, CN=localhost, OU=serverCertificate, O=serverCertificate, L=serverCertificate, ST=serverCertificate, C=IN
+Issuer: EMAILADDRESS=rootCACertificate, CN=localhost, OU=rootCACertificate, O=rootCACertificate, L=rootCACertificate, ST=rootCACertificate, C=IN
+Serial number: 338da1f19a51a9a48d8a6019fde7986f9faf3638
+Valid from: Wed May 17 14:35:18 IST 2023 until: Thu May 16 14:35:18 IST 2024
+Certificate fingerprints:
+         SHA1: 7B:49:DC:51:6C:1D:7D:4D:27:EB:7A:72:8C:F7:51:EA:16:83:CC:17
+         SHA256: E8:5C:1B:31:CD:91:94:D3:15:2A:21:27:74:A0:3A:71:7E:29:AC:D6:C3:9A:CC:9E:15:CD:B6:34:EF:0C:E2:17
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 1
+
+
+*******************************************
+*******************************************
+
+
+
+C:\Users\USER\MtlsRoot>keytool -import -file rootCA.pem -alias rootCA -keystore truststore.p12
+Enter keystore password:
+Re-enter new password:
+Owner: EMAILADDRESS=rootCACertificate, CN=localhost, OU=rootCACertificate, O=rootCACertificate, L=rootCACertificate, ST=rootCACertificate, C=IN
+Issuer: EMAILADDRESS=rootCACertificate, CN=localhost, OU=rootCACertificate, O=rootCACertificate, L=rootCACertificate, ST=rootCACertificate, C=IN
+Serial number: 2cd6222cf8e361310a4382cf390aded10914e27f
+Valid from: Wed May 17 14:30:04 IST 2023 until: Mon May 15 14:30:04 IST 2028
+Certificate fingerprints:
+         SHA1: A2:6D:EF:16:89:59:E7:2B:DF:A4:FD:93:F3:55:88:70:DB:E9:61:A7
+         SHA256: EE:6E:65:74:9E:71:61:04:48:2D:DB:3D:2D:85:89:93:B6:DB:67:BA:45:A5:11:A7:8F:EE:A3:67:71:DB:A2:6A
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions:
+
+#1: ObjectId: 2.5.29.35 Criticality=false
+AuthorityKeyIdentifier [
+KeyIdentifier [
+0000: 48 02 1B 39 42 DF 1B 7E   AD A0 40 B6 A0 63 9B 32  H..9B.....@..c.2
+0010: 03 A1 63 7D                                        ..c.
+]
+]
+
+#2: ObjectId: 2.5.29.19 Criticality=true
+BasicConstraints:[
+  CA:true
+  PathLen: no limit
+]
+
+#3: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 48 02 1B 39 42 DF 1B 7E   AD A0 40 B6 A0 63 9B 32  H..9B.....@..c.2
+0010: 03 A1 63 7D                                        ..c.
+]
+]
+
+Trust this certificate? [no]:  yes
+Certificate was added to keystore
+
+C:\Users\USER\MtlsRoot>

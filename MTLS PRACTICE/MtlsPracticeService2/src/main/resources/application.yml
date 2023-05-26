@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: client
+
+server:
+  port: 9000
+  ssl:
+    client-auth: need
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: 123456
+    key-store-type: PKCS12
+    trust-store: classpath:truststore.p12
+    trust-store-password: 123456
+    trust-store-type: PKCS12
+
+feign:
+  client:
+    default-to-properties: false
+
+endpoint:
+  ms-service: https://localhost:8000/server/data
+

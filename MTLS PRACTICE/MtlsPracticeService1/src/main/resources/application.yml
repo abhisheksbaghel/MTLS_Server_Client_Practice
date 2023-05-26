@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: server
+
+server:
+  port: 8000
+  ssl:
+    client-auth: need
+    enabled: true
+    key-store: classpath:serverkeystore.p12
+    key-store-password: 123456
+    key-store-type: PKCS12
+    trust-store: classpath:truststore.p12
+    trust-store-password: 123456
+    trust-store-type: PKCS12
